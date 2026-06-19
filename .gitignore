@@ -1,0 +1,6 @@
+# IDE specific files
+.idea/
+*.iml
+
+# Spring Boot configuration (if it contains secrets)
+backend/src/main/resources/application.properties
