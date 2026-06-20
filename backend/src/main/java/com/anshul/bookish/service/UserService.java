@@ -5,6 +5,8 @@ import com.anshul.bookish.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,7 +29,7 @@ public class UserService {
     public List< User> getAllUsers(){
         return userRepository.findAll();
     }
-
+    @Transactional
     public User updateUser(User user) {
         try{
             User inMemoryUser = getUserById(user.getId())
@@ -36,7 +38,7 @@ public class UserService {
                 if (user.getName() != null && !user.getName().trim().equals("")) inMemoryUser.setName(user.getName());
                 if (user.getEmail() != null && !user.getEmail().trim().equals("")) inMemoryUser.setEmail(user.getEmail());
                 if (user.getPassword() != null && !user.getPassword().trim().equals("")) inMemoryUser.setPassword(user.getPassword());
-                return inMemoryUser;
+                return userRepository.save(inMemoryUser);
         }catch (Exception e){
             log.error("Error: can't update user ",e);
             return null;

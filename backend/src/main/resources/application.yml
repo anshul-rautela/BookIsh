@@ -6,14 +6,13 @@ spring:
     username: anshul
     password: anshul@123
     driver-class-name: org.postgresql.Driver
-    jpa:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
       hibernate:
-        ddl-auto: update
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQLDialect
-      show-sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
 
 server:
   port: 8080
-
