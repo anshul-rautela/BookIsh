@@ -1,1 +1,19 @@
-spring.application.name=backend
+spring:
+  application:
+    name: BookIsh
+  datasource:
+    url: jdbc:postgresql://localhost:5432/BookIshDb
+    username: anshul
+    password: anshul@123
+    driver-class-name: org.postgresql.Driver
+    jpa:
+      hibernate:
+        ddl-auto: update
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+      show-sql: true
+
+server:
+  port: 8080
+
