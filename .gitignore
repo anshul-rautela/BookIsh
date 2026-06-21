@@ -3,4 +3,7 @@
 *.iml
 
 # Spring Boot configuration (if it contains secrets)
-backend/src/main/resources/application.properties
+**/src/main/resources/application.properties
+**/src/main/resources/application.yml
+**/src/main/resources/application-*.properties
+**/src/main/resources/application-*.yml

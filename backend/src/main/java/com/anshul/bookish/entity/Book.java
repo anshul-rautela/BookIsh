@@ -1,12 +1,17 @@
 package com.anshul.bookish.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,8 +27,10 @@ public class Book {
 
     private String name;
 
+    @JoinColumn(name = "user_id")
+    @ManyToOne
+    private User user;
 
-
-
-
+    @OneToMany(mappedBy = "book")
+    private List<Discussion> discussions;
 }

@@ -3,6 +3,8 @@ package com.anshul.bookish.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -38,4 +40,10 @@ public class User {
                     .userName(userName)
                     .build();
     }
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = "user")
+    private List<Book> books = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = "user")
+    private List<Discussion>discussions = new ArrayList<>();
+
+
 }
