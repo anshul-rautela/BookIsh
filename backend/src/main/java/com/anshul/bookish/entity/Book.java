@@ -29,7 +29,7 @@ public class Book {
 
     @JoinColumn(name = "user_id")
     @ManyToOne
-    private User user;
+    private Users user;
 
     @OneToMany(mappedBy = "book")
     private List<Discussion> discussions;

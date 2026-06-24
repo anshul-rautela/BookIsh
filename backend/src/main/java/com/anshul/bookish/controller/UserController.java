@@ -1,6 +1,6 @@
 package com.anshul.bookish.controller;
 
-import com.anshul.bookish.entity.User;
+import com.anshul.bookish.entity.Users;
 import com.anshul.bookish.entity.UserRequestDto;
 import com.anshul.bookish.entity.UserResponseDto;
 import com.anshul.bookish.service.UserService;
@@ -23,14 +23,14 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<User>>getAllUsers(){ //or maybe return by converting all users to userResponseDto
+    public ResponseEntity<List<Users>>getAllUsers(){ //or maybe return by converting all users to userResponseDto
         return new ResponseEntity<>(userService.getAllUsers(),HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<UserResponseDto> addUser(@RequestBody UserRequestDto userRequestDto) {
         try {
-            User user = User.builder()
+            Users user = Users.builder()
                     .userName(userRequestDto.getUserName())
                     .email(userRequestDto.getEmail())
                     .name(userRequestDto.getName())
@@ -40,14 +40,14 @@ public class UserController {
             UserResponseDto userResponseDto = user.convertToUserResponse();
             return new ResponseEntity<>(userResponseDto, HttpStatus.CREATED);
         } catch (Exception e) {
-            log.error("Error: Can't add new User "+e);
+            log.error("Error: Can't add new Users "+e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable UUID userId){
-        Optional<User> user = userService.getUserById(userId);
+        Optional<Users> user = userService.getUserById(userId);
         if(user.isPresent()){
             UserResponseDto userResponseDto = user.get().convertToUserResponse();
             return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<User>updateUser(@RequestBody User user,@PathVariable UUID userId){
+    public ResponseEntity<Users>updateUser(@RequestBody Users user,@PathVariable UUID userId){
         user.setId(userId);
         user = userService.updateUser(user);
         return new ResponseEntity<>(user,HttpStatus.OK);

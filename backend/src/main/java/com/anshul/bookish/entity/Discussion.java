@@ -22,6 +22,6 @@ public class    Discussion {
 
     @JoinColumn(name = "user_id")
     @ManyToOne
-    private User user;
+    private Users user;
 
 }
