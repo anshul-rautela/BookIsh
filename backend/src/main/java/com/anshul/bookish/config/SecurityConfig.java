@@ -37,6 +37,8 @@ public class SecurityConfig {
                                 "/oauth2/**",
                                 "/login/**"
                         ).permitAll()
+                        // Allow new user registration without a token
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/user").permitAll()
                         // Everything else requires a valid JWT
                         .anyRequest().authenticated()
                 )

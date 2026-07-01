@@ -1,5 +1,6 @@
 package com.anshul.bookish.service;
 
+import com.anshul.bookish.entity.UserRequestDto;
 import com.anshul.bookish.entity.Users;
 import com.anshul.bookish.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,39 +22,46 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Users addUser(Users user){
+    // ── Registration ──────────────────────────────────────────────
+    public Users addUser(Users user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
+    // ── Read ──────────────────────────────────────────────────────
+    public Optional<Users> getUserById(UUID userId) {
+        return userRepository.findById(userId);
+    }
 
-    public Optional<Users> getUserById(UUID userId){ //add exeption handling
-        Optional<Users> user = userRepository.findById(userId);
-        return user;
-    }
-    public List< Users> getAllUsers(){
-        return userRepository.findAll();
-    }
+    // ── Update (called from controller with DTO) ──────────────────
     @Transactional
-    public Users updateUser(Users user) {
-        try{
-            Users inMemoryUser = getUserById(user.getId())
-                    .orElseThrow(() -> new RuntimeException("Users is not present: " + user.getId()));
-                if (user.getUserName() != null && !user.getUserName().trim().equals("")) inMemoryUser.setUserName(user.getUserName());
-                if (user.getName() != null && !user.getName().trim().equals("")) inMemoryUser.setName(user.getName());
-                if (user.getEmail() != null && !user.getEmail().trim().equals("")) inMemoryUser.setEmail(user.getEmail());
-                if (user.getPassword() != null && !user.getPassword().trim().equals("")) inMemoryUser.setPassword(user.getPassword());
-                return userRepository.save(inMemoryUser);
-        }catch (Exception e){
-            log.error("Error: can't update user ",e);
+    public Users updateUser(UUID userId, UserRequestDto dto) {
+        try {
+            Users existing = getUserById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+            if (dto.getUserName() != null && !dto.getUserName().isBlank())
+                existing.setUserName(dto.getUserName());
+
+            if (dto.getName() != null && !dto.getName().isBlank())
+                existing.setName(dto.getName());
+
+            if (dto.getEmail() != null && !dto.getEmail().isBlank())
+                existing.setEmail(dto.getEmail());
+
+            // Re-encode password only when a new one is supplied
+            if (dto.getPassword() != null && !dto.getPassword().isBlank())
+                existing.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+            return userRepository.save(existing);
+        } catch (Exception e) {
+            log.error("Error: can't update user {}", userId, e);
             return null;
         }
     }
 
+    // ── Delete ────────────────────────────────────────────────────
     public void deleteUserById(UUID userId) {
-        Optional<Users> user = getUserById(userId);
-        if(user.isPresent()){
-            userRepository.deleteById(userId);
-        }
+        userRepository.findById(userId).ifPresent(u -> userRepository.deleteById(userId));
     }
 }

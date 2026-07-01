@@ -8,9 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,11 +22,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public ResponseEntity<List<Users>>getAllUsers(){ //or maybe return by converting all users to userResponseDto
-        return new ResponseEntity<>(userService.getAllUsers(),HttpStatus.OK);
-    }
-
+    // ──────────────────────────────────────────────────────────────
+    //  POST /user  →  Register a new user (public, no auth needed)
+    // ──────────────────────────────────────────────────────────────
     @PostMapping
     public ResponseEntity<UserResponseDto> addUser(@RequestBody UserRequestDto userRequestDto) {
         try {
@@ -40,32 +38,64 @@ public class UserController {
             UserResponseDto userResponseDto = user.convertToUserResponse();
             return new ResponseEntity<>(userResponseDto, HttpStatus.CREATED);
         } catch (Exception e) {
-            log.error("Error: Can't add new Users "+e);
+            log.error("Error: Can't add new User ", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    // ──────────────────────────────────────────────────────────────
+    //  GET /user/{userId}  →  Only the owner can view their profile
+    // ──────────────────────────────────────────────────────────────
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> getUserById(@PathVariable UUID userId){
-        Optional<Users> user = userService.getUserById(userId);
-        if(user.isPresent()){
-            UserResponseDto userResponseDto = user.get().convertToUserResponse();
-            return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
+    public ResponseEntity<UserResponseDto> getUserById(
+            @PathVariable UUID userId,
+            @AuthenticationPrincipal Users principal) {
+
+        // 403 if the authenticated user is requesting someone else's profile
+        if (!principal.getId().equals(userId)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        else
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        Optional<Users> user = userService.getUserById(userId);
+        if (user.isPresent()) {
+            return new ResponseEntity<>(user.get().convertToUserResponse(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    // ──────────────────────────────────────────────────────────────
+    //  PUT /user/{userId}  →  Only the owner can update their profile
+    // ──────────────────────────────────────────────────────────────
     @PutMapping("/{userId}")
-    public ResponseEntity<Users>updateUser(@RequestBody Users user,@PathVariable UUID userId){
-        user.setId(userId);
-        user = userService.updateUser(user);
-        return new ResponseEntity<>(user,HttpStatus.OK);
+    public ResponseEntity<UserResponseDto> updateUser(
+            @RequestBody UserRequestDto userRequestDto,
+            @PathVariable UUID userId,
+            @AuthenticationPrincipal Users principal) {
+
+        if (!principal.getId().equals(userId)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        Users updatedUser = userService.updateUser(userId, userRequestDto);
+        if (updatedUser == null) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(updatedUser.convertToUserResponse(), HttpStatus.OK);
     }
+
+    // ──────────────────────────────────────────────────────────────
+    //  DELETE /user/{userId}  →  Only the owner can delete their account
+    // ──────────────────────────────────────────────────────────────
     @DeleteMapping("/{userId}")
-    public ResponseEntity<?>deleteUser(@PathVariable UUID userId){
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable UUID userId,
+            @AuthenticationPrincipal Users principal) {
+
+        if (!principal.getId().equals(userId)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
         userService.deleteUserById(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }
