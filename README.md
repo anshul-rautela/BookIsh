@@ -1,121 +1,199 @@
-# 📚 BookIsh — Literary Community & Book Discussion Platform
+<div align="center">
 
-**BookIsh** is a full-stack, literary-themed web application designed for passionate readers and book clubs. Built with a vintage **"Literary Parchment"** design system, BookIsh allows users to discover books, engage in chapter-wise and book-wide discussions, share spoiler-protected reviews, participate in community forums, and manage custom reading shelves.
+  # 📚 BookIsh
 
----
+  ### *A Vintage Literary Parchment Platform for Book Lovers & Community Discourse*
 
-## ✨ Features & Highlights
+  [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+  [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+  [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+  [![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
+  [![License](https://img.shields.io/badge/License-MIT-blue.style=for-the-badge)](LICENSE)
 
-### 📜 1. Literary Parchment Aesthetic
-- **Warm Parchment Paper Surfaces**: `#FBF7EE` main background with `#F5EFE0` card surfaces.
-- **Ink-Black Serif Typography**: Standardized on elegant serif fonts (`Lora`, `Newsreader`, `Inter`).
-- **Crimson Accents**: `#8C2520` primary action color inspired by classic book spines and wax seals.
+  [Key Features](#-key-features) • [Design System](#-design-system) • [Architecture](#-architecture) • [Getting Started](#-getting-started) • [API Reference](#-api-reference)
 
-### 📖 2. OpenLibrary Book Integration
-- **Live Search & Catalog**: Search millions of books via OpenLibrary API integration.
-- **Detailed Book Pages**: View book covers, authors, descriptions, published dates, and community discussions.
-
-### 💬 3. Chapter & Book-Wide Discussions
-- **Flexible Discussion Scopes**: Post discussions tagged as either **Book Wide** or specific **Chapter Numbers**.
-- **Full CRUD Capabilities**: Create, view, edit (modal interface), and delete discussions (author-restricted).
-- **Nested Threaded Comments**: Indented reply trees supporting multi-level community discourse.
-
-### ⚠️ 4. Interactive Spoiler Protection
-- **Block-Level & Card Blur**: Automatically obscures spoiler-marked discussions with a parchment blur backdrop.
-- **Inline Spoiler Tags**: Supports typing `||spoiler text||` or `>!spoiler text!<` in comments and post bodies.
-- **Click to Reveal**: Smooth unblur effect with custom warning badges (`⚠️ Spoiler – click to reveal`).
-
-### 🏛️ 5. Community Forums
-- **Categorized Forums**: General Discussion, Book Recommendations, Author Spotlights, Writing Corner, and Genre discussions.
-- **Thread Creation & Filter**: Search, filter, and participate in community-wide topics.
-
-### 👤 6. User Profiles & Reading Shelves
-- **Personalized Profiles**: View user bio, join date, discussion history, and activity.
-- **Reading Shelves**: Track books under *Want to Read*, *Currently Reading*, and *Read*.
-
-### 🔒 7. Authentication & Security
-- **Dual Authentication**: Local Email/Password authentication with JWT (JSON Web Tokens) + Google OAuth2 support.
-- **Role & Owner Authorization**: Strict back-end validation ensuring only content creators can edit or delete their discussions and comments.
+</div>
 
 ---
 
-## 🛠️ Technology Stack
+## 📖 Overview
 
-### Frontend
-- **Framework**: React 18 + Vite
-- **Styling**: Tailwind CSS + Custom Literary Parchment Palette
-- **State & Data Fetching**: React Query (TanStack Query v5), Zustand
-- **Routing & HTTP**: React Router v6, Axios (with JWT interceptors)
+**BookIsh** is a full-stack, literary-inspired platform engineered for avid readers, book clubs, and literary enthusiasts. Designed with a custom **"Literary Parchment"** visual aesthetic, BookIsh bridges OpenLibrary's global catalog with deep chapter-by-chapter discussions, threaded community commentary, interactive spoiler masking, and customized reader shelves.
 
-### Backend
-- **Framework**: Java 21, Spring Boot 3.x
-- **Security**: Spring Security, JWT (`jjwt`), OAuth2 Client
-- **Persistence**: Spring Data JPA, Hibernate, PostgreSQL / H2 Database
-- **Build Tool**: Maven
+---
+
+## ✨ Key Features
+
+| Feature | Description |
+| :--- | :--- |
+| 📜 **Literary Parchment UI** | Warm paper surfaces (`#FBF7EE`), ink-black typography (`#1C1917`), and wax-seal crimson accents (`#8C2520`). |
+| 📚 **OpenLibrary Integration** | Live search and cataloging across millions of books via OpenLibrary REST API. |
+| 💬 **Chapter & Book Discussions** | Dedicated discourse spaces categorized by entire books or specific chapter numbers with full author CRUD control. |
+| ⚠️ **Smart Spoiler Protection** | Interactive block blur backdrops and inline `||spoiler||` syntax with smooth click-to-reveal transitions. |
+| 🏛️ **Community Forums** | Categorized forum rooms covering General Chat, Recommendations, Author Spotlights, and Genre discussions. |
+| 👤 **User Shelves & Profiles** | Personalized reader profiles with tracking shelves (*Want to Read*, *Currently Reading*, *Read*). |
+| 🔒 **JWT & OAuth2 Security** | Secure stateless authentication with JWT tokens, password hashing via BCrypt, and Google OAuth2 support. |
+
+---
+
+## 🎨 Design System
+
+BookIsh relies on a strict **75 / 20 / 5** color hierarchy to recreate the tactile feeling of reading a classic hardbound book:
+
+```
+├── 📜 Background (75%)   : #FBF7EE (Warm Vintage Parchment)
+├── 🖋️ Typography (20%)   : #1C1917 (Deep Ink Black)
+└── 🍷 Crimson Accent (5%): #8C2520 (Bookbinders Wax Seal Red)
+```
+
+- **Font Family**: Primary body and headings set in classic serif typefaces (`Lora`, `Newsreader`, `Inter`).
+- **Interactive Micro-Animations**: Smooth scale transitions, backdrop blurs, and paper-shadow depth effects.
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    Client["💻 React 18 Frontend\n(Vite + Tailwind + React Query)"]
+    API["⚡ Spring Security / JWT Filter"]
+    Controllers["🎮 Discussion & User Controllers"]
+    JPA["🗄️ Spring Data JPA / Hibernate"]
+    DB[("💾 PostgreSQL / H2 Database")]
+    OpenLib["🌐 OpenLibrary External API"]
+
+    Client -->|REST Requests + JWT| API
+    API --> Controllers
+    Controllers --> JPA
+    Controllers -->|Live Book Lookup| OpenLib
+    JPA --> DB
+```
+
+---
+
+## 📂 Project Structure
+
+```
+BookIsh/
+├── 📁 backend/                # Spring Boot REST API
+│   ├── src/main/java/com/anshul/bookish/
+│   │   ├── config/            # SecurityConfig, JwtAuthFilter, OAuth2 Handlers
+│   │   ├── controller/        # DiscussionController, UserController, ForumController
+│   │   ├── entity/            # Discussion, Comment, Users, Book, Forum
+│   │   ├── repository/        # Spring Data JPA Repositories
+│   │   └── service/           # JwtService, MyUserDetailsService
+│   └── src/main/resources/    # application.yml
+│
+└── 📁 frontend/               # React 18 SPA Application
+    ├── src/
+    │   ├── api/               # Axios API Clients
+    │   ├── components/        # SpoilerText, DiscussionCard, CommentThread, Modal
+    │   ├── hooks/             # Custom React Query Hooks (useDiscussion)
+    │   ├── pages/             # BookDetail, DiscussionThread, ForumDetail, Profile
+    │   └── store/             # Zustand Auth & State Store
+    └── index.css              # Global Parchment Utilities & Font Declarations
+```
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- **Node.js**: v18+ and `npm`
-- **Java JDK**: 21+
-- **Maven**: 3.8+ (or use included `./mvnw` wrapper)
+
+Ensure you have the following installed on your local environment:
+- **Java Development Kit (JDK)**: 21 or higher
+- **Node.js**: v18.0.0 or higher
+- **Package Manager**: `npm` (v9+)
 
 ---
 
 ### 1. Backend Setup
 
-```bash
-# Navigate to backend directory
-cd backend
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
 
-# Build application
-./mvnw clean compile
+2. Compile the Spring Boot application using the Maven wrapper:
+   ```bash
+   ./mvnw clean compile
+   ```
 
-# Run Spring Boot server (starts on http://localhost:8080)
-./mvnw spring-boot:run
-```
+3. Run the development server (runs on `http://localhost:8080`):
+   ```bash
+   ./mvnw spring-boot:run
+   ```
 
-#### Test Credentials:
-- **Email**: `bookish@gmail.com`
-- **Password**: `bookish@123`
+> [!NOTE]  
+> Default test credentials are pre-configured:
+> - **Email**: `bookish@gmail.com`
+> - **Password**: `bookish@123`
 
 ---
 
 ### 2. Frontend Setup
 
-```bash
-# Navigate to frontend directory
-cd frontend
+1. Open a new terminal and navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
 
-# Install dependencies
-npm install
+2. Install all frontend dependencies:
+   ```bash
+   npm install
+   ```
 
-# Start Vite development server (starts on http://localhost:5173)
-npm run dev
-```
+3. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open your browser and navigate to `http://localhost:5173`.
 
 ---
 
-## 🔌 API Endpoints Summary
+## 🔌 API Reference
+
+### Discussions & Comments
 
 | Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :---: |
-| `POST` | `/api/user` | Register a new user | ❌ |
-| `POST` | `/api/auth/login` | Authenticate user & get JWT | ❌ |
-| `GET` | `/api/books/{id}/discussions` | List discussions for a book | ❌ |
-| `POST` | `/api/books/{id}/discussions` | Create a discussion | ✅ |
-| `GET` | `/api/discussions/{id}` | Get discussion details & comments | ❌ |
-| `PUT` | `/api/discussions/{id}` | Edit discussion (author only) | ✅ |
-| `DELETE` | `/api/discussions/{id}` | Delete discussion (author only) | ✅ |
-| `POST` | `/api/discussions/{id}/comments` | Add comment / reply | ✅ |
-| `PUT` | `/api/comments/{id}` | Edit comment (author only) | ✅ |
-| `DELETE` | `/api/comments/{id}` | Delete comment (author only) | ✅ |
-| `GET` | `/api/forums` | List community forums | ❌ |
+| :---: | :--- | :--- | :---: |
+| `GET` | `/api/books/{openLibraryId}/discussions` | List all discussions for a book | ❌ |
+| `POST` | `/api/books/{openLibraryId}/discussions` | Create a new discussion | ✅ |
+| `GET` | `/api/discussions/{id}` | Retrieve a specific discussion thread | ❌ |
+| `PUT` | `/api/discussions/{id}` | Update discussion content/spoiler status | ✅ *(Author)* |
+| `DELETE` | `/api/discussions/{id}` | Delete discussion and child comments | ✅ *(Author)* |
+| `POST` | `/api/discussions/{id}/comments` | Add a comment or reply to thread | ✅ |
+| `PUT` | `/api/comments/{id}` | Update comment content/spoiler status | ✅ *(Author)* |
+| `DELETE` | `/api/comments/{id}` | Delete a comment | ✅ *(Author)* |
+
+### Authentication & Users
+
+| Method | Endpoint | Description | Auth Required |
+| :---: | :--- | :--- | :---: |
+| `POST` | `/api/user` | Register a new user account | ❌ |
+| `POST` | `/api/auth/login` | Authenticate and obtain JWT token | ❌ |
+| `GET` | `/api/user/{id}` | Get user profile details | ❌ |
+| `GET` | `/api/user/{id}/discussions` | List discussions created by user | ❌ |
 
 ---
 
-## 📝 License
+## 🤝 Contributing
 
-This project is open source and available under the [MIT License](LICENSE).
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](../../issues).
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+Distributed under the **MIT License**. See `LICENSE` for more information.
+
+<div align="center">
+  <sub>Built with ❤️ for literature and open discussions.</sub>
+</div>
