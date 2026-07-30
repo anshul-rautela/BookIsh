@@ -85,26 +85,64 @@ public class DiscussionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // ── Update a discussion (author only) ─────────────────────────────────────
+
+    @PutMapping("/discussions/{id}")
+    @org.springframework.transaction.annotation.Transactional
+    public ResponseEntity<?> updateDiscussion(
+            @PathVariable UUID id,
+            @RequestBody  Map<String, Object> body,
+            @AuthenticationPrincipal Users principal) {
+
+        if (principal == null) return ResponseEntity.status(401).build();
+
+        return discussionRepo.findById(id).map(d -> {
+            if (d.getAuthor() == null || !String.valueOf(d.getAuthor().getId()).equals(String.valueOf(principal.getId())))
+                return ResponseEntity.status(403).build();
+
+            if (body.containsKey("title")) d.setTitle((String) body.get("title"));
+            if (body.containsKey("body")) d.setBody((String) body.get("body"));
+            if (body.containsKey("scope")) d.setScope((String) body.get("scope"));
+            if (body.containsKey("chapterNumber")) {
+                Object ch = body.get("chapterNumber");
+                d.setChapterNumber(ch != null && !ch.toString().isEmpty() ? Integer.parseInt(ch.toString()) : null);
+            }
+            if (body.containsKey("isSpoiler") || body.containsKey("spoiler")) {
+                boolean spoilerFlag = Boolean.TRUE.equals(body.get("isSpoiler")) || Boolean.TRUE.equals(body.get("spoiler"));
+                d.setSpoiler(spoilerFlag);
+            }
+
+            return ResponseEntity.ok(discussionRepo.save(d));
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     // ── Delete a discussion (author only) ─────────────────────────────────────
     @DeleteMapping("/discussions/{id}")
+    @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<?> deleteDiscussion(
             @PathVariable UUID id,
             @AuthenticationPrincipal Users principal) {
 
+        if (principal == null) return ResponseEntity.status(401).build();
+
         return discussionRepo.findById(id).map(d -> {
-            if (!d.getAuthor().getId().equals(principal.getId()))
+            if (d.getAuthor() == null || !String.valueOf(d.getAuthor().getId()).equals(String.valueOf(principal.getId())))
                 return ResponseEntity.status(403).build();
             discussionRepo.delete(d);
             return ResponseEntity.noContent().build();
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
     // ── Add a comment ──────────────────────────────────────────────────────────
 
     @PostMapping("/discussions/{id}/comments")
+    @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<?> addComment(
             @PathVariable UUID id,
             @RequestBody  Map<String, Object> body,
             @AuthenticationPrincipal Users principal) {
+
+        if (principal == null) return ResponseEntity.status(401).build();
 
         return discussionRepo.findById(id).map(d -> {
             boolean spoilerFlag = Boolean.TRUE.equals(body.get("isSpoiler")) || Boolean.TRUE.equals(body.get("spoiler"));
@@ -118,15 +156,43 @@ public class DiscussionController {
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // ── Update a comment (author only) ────────────────────────────────────────
+
+    @PutMapping("/comments/{id}")
+    @org.springframework.transaction.annotation.Transactional
+    public ResponseEntity<?> updateComment(
+            @PathVariable UUID id,
+            @RequestBody  Map<String, Object> body,
+            @AuthenticationPrincipal Users principal) {
+
+        if (principal == null) return ResponseEntity.status(401).build();
+
+        return commentRepo.findById(id).map(c -> {
+            if (c.getAuthor() == null || !String.valueOf(c.getAuthor().getId()).equals(String.valueOf(principal.getId())))
+                return ResponseEntity.status(403).build();
+
+            if (body.containsKey("body")) c.setBody((String) body.get("body"));
+            if (body.containsKey("isSpoiler") || body.containsKey("spoiler")) {
+                boolean spoilerFlag = Boolean.TRUE.equals(body.get("isSpoiler")) || Boolean.TRUE.equals(body.get("spoiler"));
+                c.setSpoiler(spoilerFlag);
+            }
+
+            return ResponseEntity.ok(commentRepo.save(c));
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     // ── Delete a comment (author only) ────────────────────────────────────────
 
     @DeleteMapping("/comments/{id}")
+    @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<?> deleteComment(
             @PathVariable UUID id,
             @AuthenticationPrincipal Users principal) {
 
+        if (principal == null) return ResponseEntity.status(401).build();
+
         return commentRepo.findById(id).map(c -> {
-            if (!c.getAuthor().getId().equals(principal.getId()))
+            if (c.getAuthor() == null || !String.valueOf(c.getAuthor().getId()).equals(String.valueOf(principal.getId())))
                 return ResponseEntity.status(403).build();
             commentRepo.delete(c);
             return ResponseEntity.noContent().build();

@@ -8,7 +8,11 @@ export const getDiscussion = (id) =>
   api.get(`/discussions/${id}`).then(r => r.data)
 export const addComment = (discussionId, data) =>
   api.post(`/discussions/${discussionId}/comments`, data).then(r => r.data)
+export const updateDiscussion = (id, data) =>
+  api.put(`/discussions/${id}`, data).then(r => r.data)
 export const deleteDiscussion = (id) =>
   api.delete(`/discussions/${id}`).then(r => r.data)
+export const updateComment = (id, data) =>
+  api.put(`/comments/${id}`, data).then(r => r.data)
 export const deleteComment = (id) =>
   api.delete(`/comments/${id}`).then(r => r.data)

@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { useDiscussion, useAddComment } from '../hooks/useDiscussion'
+import { useDiscussion, useAddComment, useUpdateDiscussion } from '../hooks/useDiscussion'
 import { useAuthStore } from '../store/authStore'
-import { deleteDiscussion, deleteComment } from '../api/discussions'
+import { deleteDiscussion, deleteComment, updateComment } from '../api/discussions'
 import { useQueryClient } from '@tanstack/react-query'
 import CommentThread from '../components/CommentThread'
 import CommentBox from '../components/CommentBox'
 import SpoilerText from '../components/SpoilerText'
+import Modal from '../components/Modal'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { formatDate } from '../utils/dateUtils'
 
@@ -17,22 +18,65 @@ export default function DiscussionThread() {
   const qc = useQueryClient()
   const [replyTo, setReplyTo] = useState(null)
   const [deleting, setDeleting] = useState(false)
+  const [editModal, setEditModal] = useState(false)
+  const [editForm, setEditForm] = useState({
+    title: '', body: '', scope: 'BOOK', chapterNumber: '', isSpoiler: false
+  })
+  const [editError, setEditError] = useState('')
 
   const { data: discussion, isLoading } = useDiscussion(discussionId)
   const addComment = useAddComment(discussionId)
+  const updateDiscMutation = useUpdateDiscussion(discussionId, bookId)
 
   const isAuthor = user?.id && discussion?.author?.id &&
     String(user.id) === String(discussion.author.id)
+
+  const handleOpenEdit = () => {
+    setEditForm({
+      title: discussion.title || '',
+      body: discussion.body || '',
+      scope: discussion.scope || 'BOOK',
+      chapterNumber: discussion.chapterNumber != null ? String(discussion.chapterNumber) : '',
+      isSpoiler: Boolean(discussion.isSpoiler || discussion.spoiler)
+    })
+    setEditError('')
+    setEditModal(true)
+  }
+
+  const handleSaveEdit = () => {
+    setEditError('')
+    updateDiscMutation.mutate({
+      title: editForm.title,
+      body: editForm.body,
+      scope: editForm.scope,
+      chapterNumber: editForm.scope === 'CHAPTER' ? parseInt(editForm.chapterNumber) : null,
+      isSpoiler: editForm.isSpoiler,
+    }, {
+      onSuccess: () => setEditModal(false),
+      onError: (err) => {
+        const msg = err?.response?.data?.message || err?.message || 'Failed to update discussion.'
+        setEditError(String(msg))
+      }
+    })
+  }
 
   const handleDeleteDiscussion = async () => {
     if (!window.confirm('Delete this discussion? This cannot be undone.')) return
     setDeleting(true)
     try {
       await deleteDiscussion(discussionId)
-      navigate(-1)
-    } catch {
+      const redirectBookId = bookId || discussion?.book?.openLibraryId
+      qc.invalidateQueries({ queryKey: ['discussions'] })
+      qc.invalidateQueries({ queryKey: ['discussion', discussionId] })
+      if (redirectBookId) {
+        navigate(`/books/${redirectBookId}`, { replace: true })
+      } else {
+        navigate(-1)
+      }
+    } catch (err) {
       setDeleting(false)
-      alert('Failed to delete discussion.')
+      const msg = err?.response?.data?.message || err?.message || 'Failed to delete discussion.'
+      alert(msg)
     }
   }
 
@@ -43,6 +87,15 @@ export default function DiscussionThread() {
       qc.invalidateQueries({ queryKey: ['discussion', discussionId] })
     } catch {
       alert('Failed to delete comment.')
+    }
+  }
+
+  const handleEditComment = async (commentId, data) => {
+    try {
+      await updateComment(commentId, data)
+      qc.invalidateQueries({ queryKey: ['discussion', discussionId] })
+    } catch {
+      alert('Failed to update comment.')
     }
   }
 
@@ -114,18 +167,88 @@ export default function DiscussionThread() {
             <span>💬 {discussion.comments?.length ?? 0} comments</span>
           </div>
 
-          {/* Delete (author only) */}
+          {/* Edit / Delete (author only) */}
           {isAuthor && (
-            <button
-              onClick={handleDeleteDiscussion}
-              disabled={deleting}
-              className="text-xs text-[#78716C] hover:text-red-700 font-serif transition-colors flex items-center gap-1 disabled:opacity-50"
-            >
-              🗑 {deleting ? 'Deleting…' : 'Delete'}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleOpenEdit}
+                className="text-xs text-[#8C2520] hover:text-[#6C1A16] font-serif font-bold transition-colors flex items-center gap-1"
+              >
+                ✏️ Edit
+              </button>
+              <button
+                onClick={handleDeleteDiscussion}
+                disabled={deleting}
+                className="text-xs text-[#78716C] hover:text-red-700 font-serif font-bold transition-colors flex items-center gap-1 disabled:opacity-50"
+              >
+                🗑 {deleting ? 'Deleting…' : 'Delete'}
+              </button>
+            </div>
           )}
         </div>
       </div>
+
+      {/* ── Edit Discussion Modal ────────────────────────────────────── */}
+      <Modal isOpen={editModal} onClose={() => setEditModal(false)} title="Edit Discussion">
+        <div className="space-y-4">
+          <input
+            placeholder="Discussion title"
+            value={editForm.title}
+            onChange={e => setEditForm(f => ({ ...f, title: e.target.value }))}
+            className="w-full bg-[#FFFDF7] border border-[#D4C3A9] rounded-xl px-4 py-3 text-sm text-[#1C1917] placeholder-[#78716C] focus:border-[#8C2520] font-serif shadow-inner"
+          />
+          <div className="flex gap-2">
+            {['BOOK', 'CHAPTER'].map(s => (
+              <button
+                key={s}
+                onClick={() => setEditForm(f => ({ ...f, scope: s }))}
+                className={`px-3 py-1.5 text-xs rounded-lg font-serif font-semibold transition-all ${
+                  editForm.scope === s ? 'bg-[#8C2520] text-[#FFFDF7]' : 'bg-[#FFFDF7] border border-[#D4C3A9] text-[#57534E]'
+                }`}
+              >
+                {s === 'BOOK' ? '📖 Book Wide' : '📑 Chapter Specific'}
+              </button>
+            ))}
+          </div>
+          {editForm.scope === 'CHAPTER' && (
+            <input
+              type="number"
+              placeholder="Chapter number"
+              value={editForm.chapterNumber}
+              onChange={e => setEditForm(f => ({ ...f, chapterNumber: e.target.value }))}
+              className="w-full bg-[#FFFDF7] border border-[#D4C3A9] rounded-xl px-4 py-3 text-sm text-[#1C1917] placeholder-[#78716C] focus:border-[#8C2520] font-serif shadow-inner"
+            />
+          )}
+          <textarea
+            placeholder="Share your thoughts..."
+            value={editForm.body}
+            onChange={e => setEditForm(f => ({ ...f, body: e.target.value }))}
+            rows={5}
+            className="w-full bg-[#FFFDF7] border border-[#D4C3A9] rounded-xl px-4 py-3 text-sm text-[#1C1917] placeholder-[#78716C] focus:border-[#8C2520] resize-none font-serif shadow-inner"
+          />
+          <label className="flex items-center gap-2 text-xs text-[#57534E] cursor-pointer select-none font-serif">
+            <input
+              type="checkbox"
+              checked={editForm.isSpoiler}
+              onChange={e => setEditForm(f => ({ ...f, isSpoiler: e.target.checked }))}
+              className="accent-[#8C2520]"
+            />
+            ⚠️ Contains spoilers
+          </label>
+          {editError && (
+            <div className="px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-700 text-sm font-serif">
+              ⚠️ {editError}
+            </div>
+          )}
+          <button
+            onClick={handleSaveEdit}
+            disabled={!editForm.title || !editForm.body || updateDiscMutation.isPending}
+            className="w-full py-3 bg-[#8C2520] hover:bg-[#6C1A16] disabled:opacity-50 text-[#FFFDF7] rounded-xl font-serif font-bold text-base transition-all shadow-sm"
+          >
+            {updateDiscMutation.isPending ? 'Saving...' : 'Save Changes'}
+          </button>
+        </div>
+      </Modal>
 
       {/* ── Comment form (authenticated only) ────────────────────────── */}
       {isAuthenticated ? (
@@ -162,6 +285,7 @@ export default function DiscussionThread() {
         onReply={isAuthenticated ? handleReply : undefined}
         currentUserId={user?.id}
         onDeleteComment={handleDeleteComment}
+        onEditComment={handleEditComment}
       />
     </div>
   )

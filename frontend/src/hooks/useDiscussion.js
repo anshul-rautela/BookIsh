@@ -32,3 +32,14 @@ export function useAddComment(discussionId) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['discussion', discussionId] }),
   })
 }
+
+export function useUpdateDiscussion(discussionId, bookId) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data) => discussionApi.updateDiscussion(discussionId, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['discussion', discussionId] })
+      if (bookId) qc.invalidateQueries({ queryKey: ['discussions', bookId] })
+    },
+  })
+}
