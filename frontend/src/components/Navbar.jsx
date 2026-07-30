@@ -42,9 +42,8 @@ export default function Navbar() {
         {/* Nav Links */}
         <div className="hidden md:flex items-center gap-1">
           {[
-            { to: '/books', label: 'Books' },
+            { to: '/books',  label: 'Books' },
             { to: '/forums', label: 'Forums' },
-            { to: '/rooms', label: 'Live' },
           ].map(link => (
             <Link
               key={link.to}
@@ -54,6 +53,13 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <Link
+            to="/rooms"
+            className="px-3 py-2 text-sm text-slate-500 hover:text-slate-400 rounded-lg transition-all flex items-center gap-1"
+          >
+            🎙️ Live
+            <span className="text-[10px] text-violet-400 font-medium bg-violet-500/10 px-1 rounded">soon</span>
+          </Link>
         </div>
 
         {/* Auth */}

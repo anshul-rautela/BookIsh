@@ -7,8 +7,11 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDto{
+public class UserResponseDto {
+    private UUID   id;
     private String userName;
     private String email;
     private String name;
+    private String bio;
+    private String avatarUrl;
 }

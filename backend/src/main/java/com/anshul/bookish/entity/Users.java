@@ -2,6 +2,7 @@ package com.anshul.bookish.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +16,10 @@ import java.util.*;
 @AllArgsConstructor
 @Builder
 @Table(name = "users")
-public class Users implements UserDetails {  //cahnged user to Users
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler",
+        "authorities", "enabled", "accountNonExpired",
+        "accountNonLocked", "credentialsNonExpired"})
+public class Users implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(unique = true)
@@ -34,17 +38,25 @@ public class Users implements UserDetails {  //cahnged user to Users
     private String password;
     private String name;
 
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
+    @Column(length = 500)
+    private String avatarUrl;
+
+
     public UserResponseDto convertToUserResponse(){
             return UserResponseDto.builder()
+                    .id(id)
                     .email(email)
                     .name(name)
                     .userName(userName)
+                    .bio(bio)
+                    .avatarUrl(avatarUrl)
                     .build();
     }
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = "user")
-    private List<Book> books = new ArrayList<>();
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = "user")
-    private List<Discussion>discussions = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserShelf> shelf = new ArrayList<>();
 
 
 

@@ -1,36 +1,39 @@
 package com.anshul.bookish.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Data
+/**
+ * A lightweight local record that exists only to anchor discussions
+ * to a specific OpenLibrary work. All display data (title, cover, etc.)
+ * is fetched live from the OpenLibrary API.
+ */
 @Entity
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Table(name = "book")
 public class Book {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID bookId;
+    private UUID id;
 
-    @Column(length = 2000)
-    private String description;
+    /** e.g. "/works/OL45804W"  – used as the external identifier */
+    @Column(name = "open_library_id", unique = true, nullable = false, length = 60)
+    private String openLibraryId;
 
-    @Column(unique = true)
-    private String isbn;
+    /** Cached title for convenience */
+    @Column(length = 300)
+    private String title;
 
-    private String author;
-
-    private String name;
-
-    @JoinColumn(name = "user_id")
-    @ManyToOne
-    private Users user;
-
-    @OneToMany(mappedBy = "book")
-    private List<Discussion> discussions;
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("book")
+    private List<Discussion> discussions = new ArrayList<>();
 }

@@ -31,14 +31,14 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
-                        .requestMatchers(
-                                "/auth/**",
-                                "/oauth2/**",
-                                "/login/**"
-                        ).permitAll()
-                        // Allow new user registration without a token
+                        // Auth + OAuth2 endpoints — always public
+                        .requestMatchers("/auth/**", "/oauth2/**", "/login/**").permitAll()
+                        // User registration is public
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/user").permitAll()
+                        // Public read-only: books, discussions, forums, user profiles and their discussions
+                        .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                "/books/**", "/discussions/**", "/forums/**",
+                                "/user/*", "/user/*/discussions").permitAll()
                         // Everything else requires a valid JWT
                         .anyRequest().authenticated()
                 )

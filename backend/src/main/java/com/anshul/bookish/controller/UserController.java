@@ -1,8 +1,12 @@
 package com.anshul.bookish.controller;
 
+import com.anshul.bookish.entity.Discussion;
+import com.anshul.bookish.entity.UserShelf;
 import com.anshul.bookish.entity.Users;
 import com.anshul.bookish.entity.UserRequestDto;
 import com.anshul.bookish.entity.UserResponseDto;
+import com.anshul.bookish.repository.DiscussionRepository;
+import com.anshul.bookish.repository.UserShelfRepository;
 import com.anshul.bookish.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,6 +26,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserShelfRepository shelfRepo;
+
+    @Autowired
+    private DiscussionRepository discussionRepo;
 
     // ──────────────────────────────────────────────────────────────
     //  POST /user  →  Register a new user (public, no auth needed)
@@ -44,23 +55,31 @@ public class UserController {
     }
 
     // ──────────────────────────────────────────────────────────────
-    //  GET /user/{userId}  →  Only the owner can view their profile
+    //  GET /user/me  →  Shortcut: return the current user's profile
+    // ──────────────────────────────────────────────────────────────
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDto> getMe(@AuthenticationPrincipal Users principal) {
+        return ResponseEntity.ok(principal.convertToUserResponse());
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    //  GET /user/{userId}  →  Public profile view
     // ──────────────────────────────────────────────────────────────
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> getUserById(
-            @PathVariable UUID userId,
-            @AuthenticationPrincipal Users principal) {
-
-        // 403 if the authenticated user is requesting someone else's profile
-        if (!principal.getId().equals(userId)) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable UUID userId) {
         Optional<Users> user = userService.getUserById(userId);
         if (user.isPresent()) {
             return new ResponseEntity<>(user.get().convertToUserResponse(), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    //  GET /user/{userId}/discussions  →  Public: user's discussions
+    // ──────────────────────────────────────────────────────────────
+    @GetMapping("/{userId}/discussions")
+    public ResponseEntity<List<Discussion>> getUserDiscussions(@PathVariable UUID userId) {
+        return ResponseEntity.ok(discussionRepo.findByAuthor_IdOrderByCreatedAtDesc(userId));
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -97,5 +116,19 @@ public class UserController {
 
         userService.deleteUserById(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    //  GET /user/{userId}/shelf  →  Owner's reading shelf
+    // ──────────────────────────────────────────────────────────────
+    @GetMapping("/{userId}/shelf")
+    public ResponseEntity<List<UserShelf>> getUserShelf(
+            @PathVariable UUID userId,
+            @AuthenticationPrincipal Users principal) {
+
+        if (!principal.getId().equals(userId)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        return ResponseEntity.ok(shelfRepo.findAllByUser_Id(userId));
     }
 }

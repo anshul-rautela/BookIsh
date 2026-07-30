@@ -11,12 +11,14 @@ export const useAuthStore = create(
 
       login: async (credentials) => {
         const data = await authApi.login(credentials)
+        // data = { token: "...", user: { id, username, email } }
         set({ user: data.user, token: data.token, isAuthenticated: true })
         return data
       },
 
       register: async (formData) => {
         const data = await authApi.register(formData)
+        // data = { token: "...", user: { id, username, email } }
         set({ user: data.user, token: data.token, isAuthenticated: true })
         return data
       },

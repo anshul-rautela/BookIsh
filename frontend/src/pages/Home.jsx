@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { searchBooks } from '../api/books'
 import { getForums } from '../api/forums'
-import { getActiveRooms } from '../api/live'
 import BookCard from '../components/BookCard'
 import LoadingSpinner from '../components/LoadingSpinner'
 
@@ -29,11 +28,6 @@ export default function Home() {
   const { data: forums } = useQuery({
     queryKey: ['forums'],
     queryFn: getForums,
-  })
-
-  const { data: rooms } = useQuery({
-    queryKey: ['rooms'],
-    queryFn: getActiveRooms,
   })
 
   const handleSearch = (e) => {
@@ -134,41 +128,18 @@ export default function Home() {
         </section>
       )}
 
-      {/* Active Live Rooms */}
-      {rooms?.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 py-12 border-t border-[#2a2a4a]">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-              🔴 Live Rooms
-              <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            </h2>
-            <a href="/rooms" className="text-sm text-violet-400 hover:text-violet-300 transition-colors">View all →</a>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {rooms.slice(0, 3).map(room => (
-              <a
-                key={room.id}
-                href={`/rooms/${room.id}`}
-                className="bg-[#1a1a2e] border border-[#2a2a4a] rounded-2xl p-5 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-900/20 transition-all group"
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-xs text-green-400 font-medium">LIVE</span>
-                </div>
-                <h3 className="font-semibold text-slate-100 group-hover:text-cyan-400 transition-colors line-clamp-2">
-                  {room.topic}
-                </h3>
-                {room.book && (
-                  <p className="text-xs text-slate-500 mt-1 truncate">📚 {room.book.title}</p>
-                )}
-                <div className="flex items-center gap-2 mt-3 text-xs text-slate-500">
-                  <span>👥 {room.activeUserCount} online</span>
-                </div>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Active Live Rooms – Coming Soon teaser */}
+      <section className="max-w-7xl mx-auto px-4 py-12 border-t border-[#2a2a4a]">
+        <div className="flex items-center gap-3 mb-4">
+          <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+            🎙️ Live Rooms
+          </h2>
+          <span className="px-2.5 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-medium">
+            Coming Soon
+          </span>
+        </div>
+        <p className="text-slate-500 text-sm">Real-time book discussion rooms are under development. Stay tuned!</p>
+      </section>
     </div>
   )
 }

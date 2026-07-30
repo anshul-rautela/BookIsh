@@ -49,6 +49,12 @@ public class UserService {
             if (dto.getEmail() != null && !dto.getEmail().isBlank())
                 existing.setEmail(dto.getEmail());
 
+            if (dto.getBio() != null)
+                existing.setBio(dto.getBio());
+
+            if (dto.getAvatarUrl() != null)
+                existing.setAvatarUrl(dto.getAvatarUrl());
+
             // Re-encode password only when a new one is supplied
             if (dto.getPassword() != null && !dto.getPassword().isBlank())
                 existing.setPassword(passwordEncoder.encode(dto.getPassword()));

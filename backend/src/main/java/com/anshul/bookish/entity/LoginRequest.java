@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginRequest {
-    private String userName;
+    /** Frontend sends "email"; kept as the primary login identifier. */
+    private String email;
     private String password;
 }
