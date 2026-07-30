@@ -22,6 +22,7 @@ public class Comment {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String body;
 
+    @com.fasterxml.jackson.annotation.JsonProperty("isSpoiler")
     private boolean isSpoiler = false;
 
     @CreationTimestamp

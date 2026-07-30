@@ -10,9 +10,9 @@ export default function CommentBox({ onSubmit, placeholder = 'Write a comment...
 
   if (!isAuthenticated) {
     return (
-      <div className="bg-[#1a1a2e] border border-[#2a2a4a] rounded-xl p-4 text-center">
-        <p className="text-slate-400 text-sm mb-3">Sign in to comment</p>
-        <Link to="/login" className="px-4 py-2 bg-violet-600 text-white text-sm rounded-xl hover:bg-violet-500 transition-all">
+      <div className="bg-[#F5EFE0] border border-[#E4D7C3] rounded-xl p-4 text-center">
+        <p className="text-[#57534E] text-sm mb-3 font-serif">Sign in to join the discussion</p>
+        <Link to="/login" className="px-4 py-2 bg-[#8C2520] text-[#FFFDF7] text-sm rounded-xl hover:bg-[#6C1A16] transition-all font-semibold shadow-sm">
           Sign In
         </Link>
       </div>
@@ -39,15 +39,15 @@ export default function CommentBox({ onSubmit, placeholder = 'Write a comment...
         onChange={e => setBody(e.target.value)}
         placeholder={placeholder}
         rows={3}
-        className="w-full bg-[#16213e] border border-[#2a2a4a] rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 resize-none transition-all"
+        className="w-full bg-[#FFFDF7] border border-[#D4C3A9] rounded-xl px-4 py-3 text-sm text-[#1C1917] placeholder-[#78716C] focus:border-[#8C2520] focus:ring-1 focus:ring-[#8C2520] resize-none transition-all shadow-inner font-serif"
       />
       <div className="flex items-center justify-between">
-        <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
+        <label className="flex items-center gap-2 text-xs text-[#57534E] cursor-pointer font-serif">
           <input
             type="checkbox"
             checked={isSpoiler}
             onChange={e => setIsSpoiler(e.target.checked)}
-            className="accent-violet-500"
+            className="accent-[#8C2520]"
           />
           ⚠️ Mark as spoiler
         </label>
@@ -56,7 +56,7 @@ export default function CommentBox({ onSubmit, placeholder = 'Write a comment...
             <button
               type="button"
               onClick={onCancel}
-              className="px-3 py-1.5 text-xs text-slate-400 hover:text-slate-200 transition-all"
+              className="px-3 py-1.5 text-xs text-[#78716C] hover:text-[#1C1917] transition-all font-medium"
             >
               Cancel
             </button>
@@ -64,9 +64,9 @@ export default function CommentBox({ onSubmit, placeholder = 'Write a comment...
           <button
             type="submit"
             disabled={!body.trim() || loading}
-            className="px-4 py-1.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs rounded-xl transition-all font-medium"
+            className="px-4 py-1.5 bg-[#8C2520] hover:bg-[#6C1A16] disabled:opacity-50 disabled:cursor-not-allowed text-[#FFFDF7] text-xs rounded-xl transition-all font-semibold shadow-sm"
           >
-            {loading ? '...' : 'Post'}
+            {loading ? 'Posting...' : 'Post'}
           </button>
         </div>
       </div>

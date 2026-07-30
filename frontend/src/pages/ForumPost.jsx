@@ -25,24 +25,24 @@ export default function ForumPost() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 pt-24 pb-12">
+    <div className="max-w-3xl mx-auto px-4 pt-28 pb-12">
       {/* Post */}
-      <div className="flex gap-5 bg-[#1a1a2e] border border-[#2a2a4a] rounded-2xl p-6 mb-8">
+      <div className="flex gap-5 bg-[#F5EFE0] border border-[#E4D7C3] rounded-2xl p-6 sm:p-8 mb-8 shadow-sm">
         {/* Vote */}
         <div className="flex flex-col items-center gap-1 flex-shrink-0">
           <button
             onClick={() => isAuthenticated && voteMutation.mutate(1)}
-            className="text-slate-500 hover:text-violet-400 text-xl transition-colors disabled:opacity-50"
+            className="text-[#78716C] hover:text-[#8C2520] text-xl transition-colors disabled:opacity-50"
             disabled={!isAuthenticated}
           >
             ▲
           </button>
-          <span className={`text-sm font-bold ${post.voteCount > 0 ? 'text-violet-400' : post.voteCount < 0 ? 'text-red-400' : 'text-slate-400'}`}>
+          <span className={`text-sm font-serif font-bold ${post.voteCount > 0 ? 'text-[#8C2520]' : post.voteCount < 0 ? 'text-red-700' : 'text-[#78716C]'}`}>
             {post.voteCount}
           </span>
           <button
             onClick={() => isAuthenticated && voteMutation.mutate(-1)}
-            className="text-slate-500 hover:text-red-400 text-xl transition-colors disabled:opacity-50"
+            className="text-[#78716C] hover:text-red-700 text-xl transition-colors disabled:opacity-50"
             disabled={!isAuthenticated}
           >
             ▼
@@ -50,33 +50,33 @@ export default function ForumPost() {
         </div>
 
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2 text-xs text-slate-500">
-            <span className="text-violet-400 font-medium">f/{post.forumName}</span>
+          <div className="flex items-center gap-2 mb-2 text-xs font-serif text-[#78716C]">
+            <span className="text-[#8C2520] font-bold">f/{post.forumName}</span>
             <span>·</span>
-            <span>Posted by <span className="text-violet-400">{post.user?.username}</span></span>
+            <span>Posted by <span className="text-[#8C2520] font-bold">{post.user?.username}</span></span>
             <span>·</span>
             <span>{formatDate(post.createdAt)}</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-100 mb-4">{post.title}</h1>
-          <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{post.body}</p>
-          <div className="mt-4 text-xs text-slate-500">💬 {post.commentCount} comments</div>
+          <h1 className="text-3xl font-bold font-serif text-[#1C1917] mb-4 leading-snug">{post.title}</h1>
+          <p className="text-[#44403C] font-serif leading-relaxed whitespace-pre-wrap text-base">{post.body}</p>
+          <div className="mt-6 pt-4 border-t border-[#E4D7C3] text-xs font-serif text-[#78716C]">💬 {post.commentCount} comments</div>
         </div>
       </div>
 
       {/* Comment Form */}
       <div className="mb-8">
-        <h2 className="text-lg font-semibold text-slate-100 mb-4">Leave a Comment</h2>
+        <h2 className="text-xl font-bold font-serif text-[#1C1917] mb-4">Leave a Comment</h2>
         {replyTo && (
-          <div className="flex items-center gap-2 mb-3 text-xs text-violet-400">
+          <div className="flex items-center gap-2 mb-3 text-xs font-serif font-bold text-[#8C2520]">
             ↩ Replying to comment
-            <button onClick={() => setReplyTo(null)} className="text-slate-500 hover:text-slate-300">✕</button>
+            <button onClick={() => setReplyTo(null)} className="text-[#78716C] hover:text-[#1C1917]">✕</button>
           </div>
         )}
         <CommentBox onSubmit={handleSubmit} parentId={replyTo} onCancel={replyTo ? () => setReplyTo(null) : undefined} />
       </div>
 
       {/* Comments */}
-      <h2 className="text-lg font-semibold text-slate-100 mb-4">{post.comments?.length || 0} Comments</h2>
+      <h2 className="text-xl font-bold font-serif text-[#1C1917] mb-4">{post.comments?.length || 0} Comments</h2>
       <CommentThread comments={post.comments} onReply={setReplyTo} />
     </div>
   )

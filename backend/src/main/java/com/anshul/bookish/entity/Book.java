@@ -2,6 +2,7 @@ package com.anshul.bookish.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
@@ -34,6 +35,6 @@ public class Book {
     private String title;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("book")
+    @JsonIgnore
     private List<Discussion> discussions = new ArrayList<>();
 }

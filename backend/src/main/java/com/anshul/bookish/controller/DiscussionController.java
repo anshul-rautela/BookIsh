@@ -61,12 +61,14 @@ public class DiscussionController {
             return bookRepo.save(b);
         });
 
+        boolean spoilerFlag = Boolean.TRUE.equals(body.get("isSpoiler")) || Boolean.TRUE.equals(body.get("spoiler"));
+
         Discussion d = Discussion.builder()
                 .title((String) body.get("title"))
                 .body((String) body.get("body"))
                 .scope((String) body.getOrDefault("scope", "BOOK"))
                 .chapterNumber(body.get("chapterNumber") != null ? (Integer) body.get("chapterNumber") : null)
-                .isSpoiler(Boolean.TRUE.equals(body.get("isSpoiler")))
+                .isSpoiler(spoilerFlag)
                 .book(book)
                 .author(principal)
                 .build();
@@ -105,9 +107,10 @@ public class DiscussionController {
             @AuthenticationPrincipal Users principal) {
 
         return discussionRepo.findById(id).map(d -> {
+            boolean spoilerFlag = Boolean.TRUE.equals(body.get("isSpoiler")) || Boolean.TRUE.equals(body.get("spoiler"));
             Comment c = Comment.builder()
                     .body((String) body.get("body"))
-                    .isSpoiler(Boolean.TRUE.equals(body.get("isSpoiler")))
+                    .isSpoiler(spoilerFlag)
                     .discussion(d)
                     .author(principal)
                     .build();

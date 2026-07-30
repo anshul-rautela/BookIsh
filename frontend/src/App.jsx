@@ -22,7 +22,7 @@ function ProtectedRoute({ children }) {
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-[#0f0f1a]">
+    <div className="min-h-screen bg-[#FBF7EE] text-[#1C1917] font-serif selection:bg-[#8C2520] selection:text-[#FFFDF7]">
       <ErrorBoundary>
         <Routes>
           {/* Auth routes without Navbar */}

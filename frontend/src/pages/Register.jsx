@@ -29,30 +29,27 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-gradient-to-br from-violet-900/20 via-[#0f0f1a] to-cyan-900/10 pointer-events-none" />
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-violet-700/10 rounded-full blur-3xl pointer-events-none" />
-
       <div className="relative w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-6">
-            <span className="text-3xl">📚</span>
-            <span className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+          <Link to="/" className="inline-flex items-center gap-2 mb-4 group">
+            <span className="text-3xl filter drop-shadow-sm">📖</span>
+            <span className="text-3xl font-bold font-serif tracking-tight text-[#1C1917] group-hover:text-[#8C2520] transition-colors">
               Bookish
             </span>
           </Link>
-          <h1 className="text-2xl font-bold text-slate-100">Join Bookish</h1>
-          <p className="text-slate-400 mt-1 text-sm">Create your reading community account</p>
+          <h1 className="text-3xl font-bold font-serif text-[#1C1917]">Join Bookish</h1>
+          <p className="text-[#57534E] mt-1 text-sm font-serif">Create your reading community account</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-[#1a1a2e] border border-[#2a2a4a] rounded-3xl p-8 space-y-5">
+        <form onSubmit={handleSubmit} className="bg-[#F5EFE0] border border-[#E4D7C3] rounded-3xl p-8 space-y-5 shadow-sm">
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-red-400 text-sm">
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-red-700 text-sm font-serif">
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-xs text-slate-500 mb-2 uppercase tracking-wider">Username</label>
+            <label className="block text-xs text-[#57534E] mb-2 uppercase tracking-wider font-serif font-bold">Username</label>
             <input
               id="register-username"
               type="text"
@@ -62,12 +59,12 @@ export default function Register() {
               minLength={3}
               maxLength={50}
               placeholder="your_username"
-              className="w-full bg-[#16213e] border border-[#2a2a4a] focus:border-violet-500 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-600 text-sm transition-all"
+              className="w-full bg-[#FFFDF7] border border-[#D4C3A9] focus:border-[#8C2520] rounded-xl px-4 py-3 text-[#1C1917] placeholder-[#78716C] text-sm transition-all shadow-inner font-serif"
             />
           </div>
 
           <div>
-            <label className="block text-xs text-slate-500 mb-2 uppercase tracking-wider">Email</label>
+            <label className="block text-xs text-[#57534E] mb-2 uppercase tracking-wider font-serif font-bold">Email</label>
             <input
               id="register-email"
               type="email"
@@ -75,12 +72,12 @@ export default function Register() {
               onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
               required
               placeholder="you@example.com"
-              className="w-full bg-[#16213e] border border-[#2a2a4a] focus:border-violet-500 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-600 text-sm transition-all"
+              className="w-full bg-[#FFFDF7] border border-[#D4C3A9] focus:border-[#8C2520] rounded-xl px-4 py-3 text-[#1C1917] placeholder-[#78716C] text-sm transition-all shadow-inner font-serif"
             />
           </div>
 
           <div>
-            <label className="block text-xs text-slate-500 mb-2 uppercase tracking-wider">Password</label>
+            <label className="block text-xs text-[#57534E] mb-2 uppercase tracking-wider font-serif font-bold">Password</label>
             <input
               id="register-password"
               type="password"
@@ -89,22 +86,22 @@ export default function Register() {
               required
               minLength={6}
               placeholder="At least 6 characters"
-              className="w-full bg-[#16213e] border border-[#2a2a4a] focus:border-violet-500 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-600 text-sm transition-all"
+              className="w-full bg-[#FFFDF7] border border-[#D4C3A9] focus:border-[#8C2520] rounded-xl px-4 py-3 text-[#1C1917] placeholder-[#78716C] text-sm transition-all shadow-inner font-serif"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 disabled:opacity-50 text-white rounded-xl font-semibold text-sm transition-all shadow-lg hover:shadow-violet-700/30"
+            className="w-full py-3.5 bg-[#8C2520] hover:bg-[#6C1A16] disabled:opacity-50 text-[#FFFDF7] rounded-xl font-serif font-bold text-base transition-all shadow-sm"
           >
             {loading ? 'Creating account...' : 'Create Account'}
           </button>
         </form>
 
-        <p className="text-center text-slate-500 text-sm mt-6">
+        <p className="text-center text-[#78716C] text-sm mt-6 font-serif">
           Already have an account?{' '}
-          <Link to="/login" className="text-violet-400 hover:text-violet-300 transition-colors font-medium">
+          <Link to="/login" className="text-[#8C2520] hover:text-[#6C1A16] transition-colors font-bold">
             Sign in
           </Link>
         </p>

@@ -38,24 +38,18 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative pt-28 pb-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-900/30 via-[#0f0f1a] to-cyan-900/20" />
-        <div className="absolute top-20 left-1/4 w-72 h-72 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
-
+      <section className="relative pt-32 pb-20 overflow-hidden">
         <div className="relative max-w-3xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 bg-violet-500/10 border border-violet-500/30 px-4 py-2 rounded-full text-sm text-violet-300 mb-6">
-            ✨ Your social reading community
+          <div className="inline-flex items-center gap-2 bg-[#8C2520]/10 border border-[#8C2520]/20 px-4 py-1.5 rounded-full text-xs font-serif font-semibold text-[#8C2520] mb-6 shadow-sm">
+            📜 Your Literary Sanctuary & Reading Guild
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-violet-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
-              Discover, Track,
-            </span>
+          <h1 className="text-5xl md:text-6xl font-bold font-serif mb-6 leading-tight text-[#1C1917]">
+            Discover, Track, &
             <br />
-            <span className="text-slate-100">and Discuss Books</span>
+            <span className="italic text-[#8C2520]">Discuss Literature</span>
           </h1>
-          <p className="text-slate-400 text-lg mb-10 max-w-xl mx-auto">
-            Join thousands of readers. Build your reading list, participate in discussions, and chat live.
+          <p className="text-[#57534E] text-lg mb-10 max-w-xl mx-auto font-serif leading-relaxed">
+            Gather with fellow book lovers. Build your personal library, share chapter insights, and explore timeless discussions.
           </p>
 
           <form onSubmit={handleSearch} className="flex gap-3 max-w-xl mx-auto">
@@ -64,8 +58,8 @@ export default function Home() {
                 id="hero-search"
                 value={query}
                 onChange={e => { setQuery(e.target.value); if (e.target.value.length > 1) setSearchQ(e.target.value) }}
-                placeholder="Search for any book..."
-                className="w-full bg-[#1a1a2e] border border-[#2a2a4a] focus:border-violet-500 rounded-2xl px-5 py-4 text-slate-200 placeholder-slate-500 text-base transition-all shadow-lg"
+                placeholder="Search by book title, author, or keyword..."
+                className="w-full bg-[#FFFDF7] border border-[#D4C3A9] focus:border-[#8C2520] focus:ring-1 focus:ring-[#8C2520] rounded-2xl px-5 py-4 text-[#1C1917] placeholder-[#78716C] text-base transition-all shadow-md font-serif"
               />
               {searching && (
                 <div className="absolute right-4 top-1/2 -translate-y-1/2">
@@ -75,7 +69,7 @@ export default function Home() {
             </div>
             <button
               type="submit"
-              className="px-6 py-4 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 text-white rounded-2xl font-semibold text-base transition-all shadow-lg hover:shadow-violet-700/30"
+              className="px-7 py-4 bg-[#8C2520] hover:bg-[#6C1A16] text-[#FFFDF7] rounded-2xl font-serif font-bold text-base transition-all shadow-md hover:shadow-lg"
             >
               Search
             </button>
@@ -86,9 +80,9 @@ export default function Home() {
       {/* Search Results */}
       {searchResults?.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 pb-12">
-          <h2 className="text-xl font-bold text-slate-100 mb-5 flex items-center gap-2">
+          <h2 className="text-2xl font-serif font-bold text-[#1C1917] mb-5 flex items-center gap-2">
             🔍 Results for "{searchQ}"
-            <span className="text-sm text-slate-500 font-normal">({searchResults.length} books)</span>
+            <span className="text-sm text-[#78716C] font-normal">({searchResults.length} books)</span>
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             {searchResults.map(book => (
@@ -100,28 +94,28 @@ export default function Home() {
 
       {/* Featured Forums */}
       {forums?.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 py-12 border-t border-[#2a2a4a]">
+        <section className="max-w-7xl mx-auto px-4 py-12 border-t border-[#E4D7C3]">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-slate-100">🗣️ Community Forums</h2>
-            <a href="/forums" className="text-sm text-violet-400 hover:text-violet-300 transition-colors">View all →</a>
+            <h2 className="text-2xl font-serif font-bold text-[#1C1917]">🗣️ Community Forums</h2>
+            <a href="/forums" className="text-sm font-serif font-bold text-[#8C2520] hover:text-[#6C1A16] transition-colors">View all →</a>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {forums.slice(0, 6).map(forum => (
               <a
                 key={forum.id}
                 href={`/forums/${forum.name}`}
-                className="bg-[#1a1a2e] border border-[#2a2a4a] rounded-2xl p-5 hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-900/20 transition-all group"
+                className="bg-[#F5EFE0] border border-[#E4D7C3] rounded-2xl p-5 hover:border-[#8C2520]/50 hover:shadow-lg hover:shadow-[#8C2520]/10 transition-all group shadow-sm"
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="font-semibold text-slate-100 group-hover:text-violet-400 transition-colors">
+                    <h3 className="font-serif font-bold text-lg text-[#1C1917] group-hover:text-[#8C2520] transition-colors">
                       f/{forum.name}
                     </h3>
-                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{forum.description}</p>
+                    <p className="text-xs text-[#57534E] mt-1 line-clamp-2 leading-relaxed font-serif">{forum.description}</p>
                   </div>
                   <span className="text-2xl">📖</span>
                 </div>
-                <div className="mt-3 text-xs text-slate-600">{forum.postCount || 0} posts</div>
+                <div className="mt-4 pt-3 border-t border-[#E4D7C3] text-xs font-serif text-[#78716C]">{forum.postCount || 0} posts</div>
               </a>
             ))}
           </div>
@@ -129,16 +123,16 @@ export default function Home() {
       )}
 
       {/* Active Live Rooms – Coming Soon teaser */}
-      <section className="max-w-7xl mx-auto px-4 py-12 border-t border-[#2a2a4a]">
-        <div className="flex items-center gap-3 mb-4">
-          <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-            🎙️ Live Rooms
+      <section className="max-w-7xl mx-auto px-4 py-12 border-t border-[#E4D7C3]">
+        <div className="flex items-center gap-3 mb-3">
+          <h2 className="text-2xl font-serif font-bold text-[#1C1917] flex items-center gap-2">
+            🎙️ Live Reading Salons
           </h2>
-          <span className="px-2.5 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-medium">
+          <span className="px-3 py-0.5 rounded-full bg-[#8C2520]/10 border border-[#8C2520]/20 text-[#8C2520] text-xs font-serif font-semibold uppercase tracking-wider">
             Coming Soon
           </span>
         </div>
-        <p className="text-slate-500 text-sm">Real-time book discussion rooms are under development. Stay tuned!</p>
+        <p className="text-[#57534E] text-sm font-serif">Real-time bookish discussion rooms are currently being forged. Stay tuned!</p>
       </section>
     </div>
   )

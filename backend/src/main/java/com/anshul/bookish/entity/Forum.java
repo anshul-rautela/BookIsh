@@ -3,6 +3,7 @@ package com.anshul.bookish.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.Instant;
@@ -40,6 +41,6 @@ public class Forum {
     private Users createdBy;
 
     @OneToMany(mappedBy = "forum", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("forum")
+    @JsonIgnore
     private List<ForumPost> posts = new ArrayList<>();
 }

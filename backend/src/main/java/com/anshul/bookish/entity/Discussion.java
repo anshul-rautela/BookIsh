@@ -33,6 +33,7 @@ public class Discussion {
 
     private Integer chapterNumber;
 
+    @com.fasterxml.jackson.annotation.JsonProperty("isSpoiler")
     private boolean isSpoiler = false;
 
     @CreationTimestamp
