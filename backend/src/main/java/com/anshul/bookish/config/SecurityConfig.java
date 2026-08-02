@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/user").permitAll()
                         // Public read-only: books, discussions, forums, user profiles and their discussions
                         .requestMatchers(org.springframework.http.HttpMethod.GET,
-                                "/books", "/books/**", "/discussions/**", "/forums", "/forums/**",
+                                "/books/**", "/discussions/**", "/forums/**",
                                 "/user/*", "/user/*/discussions").permitAll()
                         // Everything else requires a valid JWT
                         .anyRequest().authenticated()
